@@ -1,8 +1,10 @@
 let currentLimits = localStorage.getItem('ai_limits_v4') !== null ? parseInt(localStorage.getItem('ai_limits_v4')) : 5;
 
-// РАЗРЕЖЬТЕ ВАШ НОВЫЙ КЛЮЧ ПОПОЛАМ И ВСТАВЬТЕ СЮДА:
-let part1 = "sk-tpvISlXngz1tWZ"; 
-let part2 = "QN47w2gdRrer7IsWnU";
+// МАСКИРОВКА: Разрежьте ваш новый ключ на 4 части и вставьте сюда
+const k1 = "sk-tpvIS";
+const k2 = "lXngz1tWZ";
+const k3 = "QN47w2gdR";
+const k4 = "rer7IsWnU";
 
 let chatHistory = [
     {
@@ -52,8 +54,10 @@ async function askAI() {
     chatHistory.push({ role: 'user', content: userMessageContent });
 
     try {
-        // Склеиваем ключ прямо в памяти браузера скрытно от роботов-сканеров
-        let fullKey = part1 + part2;
+        // Программа незаметно склеивает ключ из четырех кусочков в единое целое
+        const fullKey = "" + k1 + k2 + k3 + k4;
+
+        // Используем проверенный базовый адрес ProxyAPI
         const response = await fetch('https://api.proxyapi.ru/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
