@@ -48,8 +48,8 @@ async function askAI() {
     chatHistory.push({ role: 'user', content: userMessageContent });
 
     try {
-        // ЗДЕСЬ УСТАНОВЛЕН СТОПРОЦЕНТНО ПРАВИЛЬНЫЙ АДРЕС ПО ДОКУМЕНТАЦИИ
-        const response = await fetch('https://api.proxyapi.ru/openai/v1/chat/completions', {
+        // ИСПОЛЬЗУЕМ БЕЗОПАСНЫЙ ЭНДПОИНТ С СУБДОМЕНОМ OPENAI ДЛЯ ОБХОДА CORS БЛОКИРОВОК
+        const response = await fetch('https://openai.api.proxyapi.ru/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
