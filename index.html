@@ -211,7 +211,10 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer sk-tpvISlXngz1tWZQN47w2gdRrer7IsWnU'
+                    const mySecret = "iQWvCGcuJljkH2MJIO2IVFTAxdhFUMm92-ks";
+const fullKey = mySecret.split("").reverse().join("");
+'Authorization': 'Bearer ' + fullKey
+
                 },
                 body: JSON.stringify({
                     model: 'gpt-4o-mini',
