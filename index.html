@@ -158,7 +158,7 @@
     }
     updateUI();
 
-    async function askAI() {
+        async function askAI() {
         const text = document.getElementById('user-input').value.trim();
         if (!text) return alert("Пожалуйста, напиши что-нибудь.");
         
@@ -170,22 +170,21 @@
         responseBox.style.display = "block";
         responseBox.innerText = "Внимательно читаю...";
 
-        chatHistory.push({ role: 'user', content: text });
-
-        // Теперь триггер срабатывает на 1 оставшемся сообщении (то есть на 5-м шаге)
+        // Умная склейка: если это последний 5-й ход, незаметно добавляем инструкцию прямо к тексту пользователя
+        let userMessageContent = text;
         if (currentLimits === 1) {
-            chatHistory.push({ 
-                role: 'user', 
-                content: 'ВНИМАНИЕ: Это твой последний 5-й ответ. Сеанс завершен. Тебе нужно логично и очень мягко подвести итог беседы, подбодрить пользователя, сказать, что всё обязательно будет хорошо, и в самом конце сообщения добавить фразу: "Наш сегодняшний бесплатный экспресс-сеанс подошел к концу. Чтобы продолжить наш разговор без ограничений, пожалуйста, заряди батарейку поддержки ниже. Я буду очень ждать тебя!".' 
-            });
+            userMessageContent += "\n\n(ИНСТРУКЦИЯ ДЛЯ ИИ: Это твой последний 5-й ответ в сеансе. Сеанс завершен. Тебе нужно очень мягко подвести итог беседы, подбодрить меня, сказать, что всё обязательно будет хорошо, и в самом конце ответа строго добавить фразу: 'Наш сегодняшний бесплатный экспресс-сеанс подошел к концу. Чтобы продолжить наш разговор без ограничений, пожалуйста, заряди батарейку поддержки ниже. Я буду очень ждать тебя!').";
         }
 
+        // Добавляем сообщение в историю
+        chatHistory.push({ role: 'user', content: userMessageContent });
+
         try {
-            const response = await fetch('https://proxyapi.ru', {
+            const response = await fetch('https://openai.api.proxyapi.ru/v1/chat/completions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer sk-MxrX305sh2mHt5FW9TP7khb2Uf5VbpKZ' // Твой ключ от ProxyAPI
+                    'Authorization': 'Bearer sk-MxrX305sh2mHt5FW9TP7khb2Uf5VbpKZ' // Ваш ключ на месте
                 },
                 body: JSON.stringify({
                     model: 'gpt-4o-mini',
@@ -194,8 +193,15 @@
             });
 
             const data = await response.json();
-            const aiReply = data.choices.message.content;
             
+            // Проверка на ошибку от сервера
+            if (!response.ok || data.error) {
+                throw new Error(data.error ? data.error.message : 'Ошибка сервера');
+            }
+
+            const aiReply = data.choices[0].message.content;
+            
+            // Сохраняем чистый ответ ИИ в историю
             chatHistory.push({ role: 'assistant', content: aiReply });
             responseBox.innerText = aiReply;
             
@@ -206,6 +212,8 @@
             document.getElementById('user-input').value = "";
 
         } catch (error) {
+            // Если произошел сбой, аккуратно удаляем последнее сообщение из памяти, чтобы не ломать диалог дальше
+            chatHistory.pop();
             responseBox.innerText = "Ой, я немного отвлекся. Повтори, пожалуйста, я очень хочу тебя выслушать.";
             console.error(error);
         } finally {
@@ -216,6 +224,7 @@
         }
     }
 </script>
+
 
 </body>
 </html>
