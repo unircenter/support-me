@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Зарядка батарейки...</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #0c4a6e;
+        }
+        .loader {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="loader">
+    <h2>🔋 Батарейка заряжается...</h2>
+    <p>Спасибо за поддержку! Сейчас вы вернетесь к разговору.</p>
+</div>
+
+<script>
+    // Магия: принудительно возвращаем заряд 5/5 в память браузера
+    localStorage.setItem('ai_limits_v3', 5);
+    
+    // Ждем 2 секунды для красоты и перенаправляем пользователя обратно на главный сайт
+    setTimeout(function() {
+        window.location.href = './index.html';
+    }, 2000);
+</script>
+
+</body>
+</html>
