@@ -57,7 +57,7 @@ async function askAI() {
     try {
         const fullKey = reversedKey.split("").reverse().join("");
 
-        const response = await fetch('https://api.proxyapi.ru/openai/v1/chat/completions', {
+       const response = await fetch('https://proxyapi.ru', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
