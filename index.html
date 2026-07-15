@@ -195,8 +195,7 @@
     }
 
     async function speakText() {
-            async function speakText() {
-        const text = document.getElementById('response').innerText;
+           const text = document.getElementById('response').innerText;
         if (!text || text.startsWith("Внимательно") || text.startsWith("Обдумываю")) return;
 
         const voiceBtn = document.getElementById('voice-btn');
