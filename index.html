@@ -158,9 +158,11 @@
 </div>
 
 <script>
-    let currentLimits = localStorage.getItem('ai_rollback_limits_v1') !== null ? parseInt(localStorage.getItem('ai_rollback_limits_v1')) : 5;
-    
+    let currentLimits = localStorage.getItem('ai_perfect_limits_v1') !== null ? parseInt(localStorage.getItem('ai_perfect_limits_v1')) : 5;
+    let currentAudio = null; // ВОТ СЮДА ЕЁ НУЖНО ПЕРЕНЕСТИ!
+
     let chatHistory = [
+
         {
             role: 'system', 
             content: 'Ты — самый добрый, чуткий и поддерживающий друг и психолог на свете. Твоя цель — вести последовательный, логичный и глубокий диалог с пользователем. Задавай наводящие мягкие вопросы, внимательно цепляйся за детали из прошлых ответов. Используй короткие, понятные предложения. Показывай, что ты помнишь всё, что он сказал ранее.'
@@ -250,7 +252,7 @@ const aiReply = data.choices[0].message.content;
             }
         }
     }
-        let currentAudio = null;
+      
     async function speakText() {
         const text = document.getElementById('response').innerText;
         if (!text || text.startsWith("Внимательно") || text.startsWith("Обдумываю")) return;
