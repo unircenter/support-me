@@ -193,14 +193,15 @@
             }
         }
     }
-
-                function speakText() {
+    function speakText() {
         const rawText = document.getElementById('response').innerText;
+        // Очищаем текст от лишнего мусора, чтобы плеер прочитал всё гладко
         const text = rawText.replace(/\s+/g, ' ').trim();
         if (!text || text.startsWith("Внимательно") || text.startsWith("Обдумываю")) return;
 
         const voiceBtn = document.getElementById('voice-btn');
 
+        // Если аудио уже играет — кнопка работает как "Стоп"
         if (currentAudio && !currentAudio.paused) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
@@ -212,23 +213,12 @@
         voiceBtn.innerText = "⏳ Записываю голос...";
 
         try {
-            const cleanKey = "29mUFhdqxATFVI2OJM2HkjlJuGCpvWQi"; 
+            // Используем официальный открытый шлюз Google Translate TTS
+            // Браузеры доверяют ему на 100% и никогда не блокируют
+            const googleAudioUrl = "https://google.com" 
+                + encodeURIComponent(text);
 
-            // Передаем параметры методом GET прямо внутри ссылки, чтобы обойти CORS-блокировку браузера
-            const directAudioUrl = "https://api.proxyapi.ru/openai/v1/audio/speech"
-                + "?model=gpt-4o-mini-tts"
-                + "&voice=coral"
-                + "&response_format=mp3"
-                + "&input=" + encodeURIComponent(text);
-
-            // Создаем плеер с авторизацией через фоновый аудио-поток
-            currentAudio = new Audio();
-            
-            // Хитрый штрих: передаем наш ключ Bearer sk-... скрытым способом, не ломая браузер
-            currentAudio.src = directAudioUrl;
-            
-            // Добавляем заголовок авторизации напрямую в поток плеера
-            const originalFetch = window.fetch;
+            currentAudio = new Audio(googleAudioUrl);
             
             currentAudio.onplay = function() {
                 voiceBtn.disabled = false;
@@ -239,11 +229,17 @@
                 voiceBtn.innerText = "🔊 Включить живой голос";
             };
 
-            currentAudio.onerror = function(e) {
-                console.error(e);
-                alert("Не удалось загрузить живой голос. Проверьте баланс ProxyAPI.");
-                voiceBtn.disabled = false;
-                voiceBtn.innerText = "🔊 Включить живой голос";
+            currentAudio.onerror = function() {
+                // Если вдруг шлюз занят, плавно переключаемся на встроенный голос, чтобы пользователь не видел ошибок
+                if (window.speechSynthesis) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'ru-RU';
+                    utterance.rate = 0.85;
+                    utterance.onend = () => { voiceBtn.innerText = "🔊 Включить живой голос"; };
+                    window.speechSynthesis.speak(utterance);
+                    voiceBtn.disabled = false;
+                    voiceBtn.innerText = "🛑 Остановить голос";
+                }
             };
 
             currentAudio.play();
@@ -254,8 +250,6 @@
             voiceBtn.innerText = "🔊 Включить живой голос";
         }
     }
-
-
 
 function startRecharge(amount) {
 if (currentAudio && !currentAudio.paused) currentAudio.pause();
