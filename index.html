@@ -250,7 +250,7 @@ const aiReply = data.choices[0].message.content;
             }
         }
     }
-    let currentAudio = null;
+        let currentAudio = null;
     async function speakText() {
         const text = document.getElementById('response').innerText;
         if (!text || text.startsWith("Внимательно") || text.startsWith("Обдумываю")) return;
@@ -270,20 +270,21 @@ const aiReply = data.choices[0].message.content;
         try {
             const cleanKey = "29mUFhdqxATFVI2OJM2HkjlJuGCpvWQi"; 
 
-                    const baseApiUrl = 'https://proxyapi.ru';
-        const audioEndpoint = '/openai/v1/audio/speech';
-        const response = await fetch(baseApiUrl + audioEndpoint, {
+            // Разделяем адрес без опечаток
+            const baseApiUrl = 'https://api.proxyapi.ru';
+            const audioEndpoint = '/openai/v1/audio/speech';
 
+            const response = await fetch(baseApiUrl + audioEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer sk-' + cleanKey
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4o-mini-tts', 
-                    input: text,           
-                    voice: 'coral',           
-                    response_format: 'mp3' 
+                    model: 'gpt-4o-mini-tts', // Официальная TTS модель
+                    input: text,              // Текст для озвучки
+                    voice: 'coral',           // Живой нежный голос
+                    response_format: 'mp3'
                 })
             });
 
@@ -311,8 +312,7 @@ const aiReply = data.choices[0].message.content;
             voiceBtn.disabled = false;
             voiceBtn.innerText = "🔊 Включить живой голос";
         }
-    }
-    
+
     function startRecharge(amount) {
         let payUrl = "";
         
