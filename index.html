@@ -135,7 +135,7 @@
             currentAudio.pause();
             currentAudio.currentTime = 0;
         }
-        document.getElementById('voice-btn').innerText = "🔊 Включить живой голос";
+        document.getElementById('voice-btn').innerText = "🔊 Если хочешь, могу вслух";
         document.getElementById('voice-btn').style.display = "none";
         
         const responseBox = document.getElementById('response');
@@ -213,7 +213,7 @@ if (isAutoplayEnabled) {
                 currentAudio.currentTime = 0;
                 isAutoVoice = false; // Отключаем автоматический режим
                 voiceBtn.style.backgroundColor = "#6366f1"; // Возвращаем фиолетовый цвет
-                voiceBtn.innerText = "🔊 Включить автоозвучку";
+                voiceBtn.innerText = "🔊 Если хочешь, могу вслух";
                 return;
             }
             // Если звук не играл и пользователь нажал кнопку — включаем авторежим постоянной озвучки
@@ -221,7 +221,7 @@ if (isAutoplayEnabled) {
         }
 
         voiceBtn.disabled = true;
-        voiceBtn.innerText = "⏳ Записываю голос...";
+        voiceBtn.innerText = "⏳ Мммм...";
 
         try {
             const cleanKey = "29mUFhdqxATFVI2OJM2HkjlJuGCpvWQi"; 
@@ -250,17 +250,17 @@ if (isAutoplayEnabled) {
             currentAudio.onplay = function() {
                 voiceBtn.disabled = false;
                 voiceBtn.style.backgroundColor = "#ef4444"; // Красный цвет во время говорения
-                voiceBtn.innerText = "🛑 Остановить голос (Выключить автоозвучку)";
+                voiceBtn.innerText = "🛑 Остановить голос";
             };
 
             currentAudio.onended = function() {
                 // Когда чтение завершено, если авторежим активен — красим кнопку в зелёный и ждём следующий ответ
                 if (isAutoVoice) {
                     voiceBtn.style.backgroundColor = "#10b981"; // Зелёный цвет режима ожидания
-                    voiceBtn.innerText = "🎧 Автоозвучка активна (Жду ответ...)";
+                    voiceBtn.innerText = "🎧 Я слушаю тебя... (Напиши что-нибудь)";
                 } else {
                     voiceBtn.style.backgroundColor = "#6366f1"; // Фиолетовый базовый
-                    voiceBtn.innerText = "🔊 Включить автоозвучку";
+                    voiceBtn.innerText = "🔊 Если хочешь, могу вслух";
                 }
             };
 
@@ -272,10 +272,10 @@ if (isAutoplayEnabled) {
             voiceBtn.disabled = false;
             if (isAutoVoice) {
                 voiceBtn.style.backgroundColor = "#10b981";
-                voiceBtn.innerText = "🎧 Автоозвучка активна (Жду ответ...)";
+                voiceBtn.innerText = "🎧 Я слушаю тебя... (Напиши что-нибудь)";
             } else {
                 voiceBtn.style.backgroundColor = "#6366f1";
-                voiceBtn.innerText = "🔊 Включить автоозвучку";
+                voiceBtn.innerText = "🔊 Если хочешь, могу вслух";
             }
         }
     }
