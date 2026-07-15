@@ -194,16 +194,16 @@
         }
     }
 
-        function speakText() {
+            function speakText() {
         const text = document.getElementById('response').innerText;
         if (!text || text.startsWith("Внимательно") || text.startsWith("Обдумываю")) return;
 
         const voiceBtn = document.getElementById('voice-btn');
 
-        // Если аудио уже играет — кнопка работает как "Стоп"
-        if (currentAudio && !currentAudio.paused) {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
+        // Если старый плеер уже был создан — удаляем его перед новой озвучкой
+        const oldFrame = document.getElementById('yandex-voice-frame');
+        if (oldFrame) {
+            oldFrame.remove();
             voiceBtn.innerText = "🔊 Включить живой голос";
             return;
         }
@@ -212,30 +212,24 @@
         voiceBtn.innerText = "⏳ Записываю голос...";
 
         try {
-            // Используем официальный бесплатный браузерный шлюз Яндекса
-            // Голос 'oksana' (Оксана) — самый популярный, мягкий и эмпатичный женский голос
-            const yandexAudioUrl = "https://yandex.net" 
+            // Создаем невидимый изолированный контейнер-фрейм, который браузер не сможет заблокировать
+            const frame = document.createElement('iframe');
+            frame.id = 'yandex-voice-frame';
+            frame.style.display = 'none';
+            
+            // Загружаем мягкий, живой человеческий голос Оксаны
+            frame.src = "https://yandex.net" 
                 + encodeURIComponent(text) 
                 + "&format=mp3&lang=ru-RU&speaker=oksana&emotion=good&speed=0.9";
 
-            currentAudio = new Audio(yandexAudioUrl);
-            
-            currentAudio.onplay = function() {
+            // Встраиваем фрейм на страницу — звук пойдет автоматически
+            document.body.appendChild(frame);
+
+            // Кнопка переключается в режим "Стоп"
+            setTimeout(() => {
                 voiceBtn.disabled = false;
                 voiceBtn.innerText = "🛑 Остановить голос";
-            };
-
-            currentAudio.onended = function() {
-                voiceBtn.innerText = "🔊 Включить живой голос";
-            };
-
-            currentAudio.onerror = function() {
-                alert("Не удалось загрузить живой голос. Попробуйте еще раз.");
-                voiceBtn.disabled = false;
-                voiceBtn.innerText = "🔊 Включить живой голос";
-            };
-
-            currentAudio.play();
+            }, 1000);
 
         } catch (error) {
             console.error(error);
@@ -243,7 +237,6 @@
             voiceBtn.innerText = "🔊 Включить живой голос";
         }
     }
-
 
 function startRecharge(amount) {
 if (currentAudio && !currentAudio.paused) currentAudio.pause();
