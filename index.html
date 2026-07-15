@@ -194,12 +194,13 @@
         }
     }
 
-    async function speakText() {
-           const text = document.getElementById('response').innerText;
+        function speakText() {
+        const text = document.getElementById('response').innerText;
         if (!text || text.startsWith("Внимательно") || text.startsWith("Обдумываю")) return;
 
         const voiceBtn = document.getElementById('voice-btn');
 
+        // Если аудио уже играет — кнопка работает как "Стоп"
         if (currentAudio && !currentAudio.paused) {
             currentAudio.pause();
             currentAudio.currentTime = 0;
@@ -211,31 +212,13 @@
         voiceBtn.innerText = "⏳ Записываю голос...";
 
         try {
-            const cleanKey = "29mUFhdqxATFVI2OJM2HkjlJuGCpvWQi"; 
+            // Используем официальный бесплатный браузерный шлюз Яндекса
+            // Голос 'oksana' (Оксана) — самый популярный, мягкий и эмпатичный женский голос
+            const yandexAudioUrl = "https://yandex.net" 
+                + encodeURIComponent(text) 
+                + "&format=mp3&lang=ru-RU&speaker=oksana&emotion=good&speed=0.9";
 
-            const baseApiUrl = 'https://proxyapi.ru';
-            const audioEndpoint = '/openai/v1/audio/speech';
-
-            const response = await fetch(baseApiUrl + audioEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer sk-' + cleanKey
-                },
-                body: JSON.stringify({
-                    model: 'tts-1',        // Правильная официальная модель озвучки OpenAI
-                    input: text,           // Текст для озвучки
-                    voice: 'coral',         // Живой человеческий голос
-                    response_format: 'mp3' 
-                })
-            });
-
-            if (!response.ok) throw new Error('Ошибка синтеза голоса');
-
-            const blob = await response.blob();
-            const audioUrl = URL.createObjectURL(blob);
-
-            currentAudio = new Audio(audioUrl);
+            currentAudio = new Audio(yandexAudioUrl);
             
             currentAudio.onplay = function() {
                 voiceBtn.disabled = false;
@@ -246,15 +229,21 @@
                 voiceBtn.innerText = "🔊 Включить живой голос";
             };
 
+            currentAudio.onerror = function() {
+                alert("Не удалось загрузить живой голос. Попробуйте еще раз.");
+                voiceBtn.disabled = false;
+                voiceBtn.innerText = "🔊 Включить живой голос";
+            };
+
             currentAudio.play();
 
         } catch (error) {
             console.error(error);
-            alert("Не удалось загрузить живой голос. Попробуйте еще раз.");
             voiceBtn.disabled = false;
-           voiceBtn.innerText = "🔊 Включить живой голос";
+            voiceBtn.innerText = "🔊 Включить живой голос";
         }
     }
+
 
 function startRecharge(amount) {
 if (currentAudio && !currentAudio.paused) currentAudio.pause();
